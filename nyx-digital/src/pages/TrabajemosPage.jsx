@@ -5,7 +5,6 @@ function TrabajemosPage() {
 
   return (
     <div style={wrapper}>
-
       <div style={overlay}>
 
         <h1 style={title}>Construyamos tu proyecto digital 🚀</h1>
@@ -45,19 +44,19 @@ function TrabajemosPage() {
       </div>
 
       {open && <Cotizador onClose={() => setOpen(false)} />}
-
     </div>
   );
 }
 
 //////////////////////////////////////////////////////////////////
-// 🔥 COTIZADOR PROFESIONAL POR PLANES
+// 🔥 COTIZADOR
 //////////////////////////////////////////////////////////////////
 
 function Cotizador({ onClose }) {
 
-  const [plan, setPlan] = useState(null); // front, back, full
+  const [plan, setPlan] = useState(null);
   const [dominio, setDominio] = useState("gratis");
+  const [mantenimiento, setMantenimiento] = useState(0); // 🔥 nuevo
 
   let precio = 0;
 
@@ -69,10 +68,14 @@ function Cotizador({ onClose }) {
     precio += 60000;
   }
 
+  // 🔥 mantenimiento (cada unidad = 2 meses)
+  precio += mantenimiento * 40000;
+
   const mensaje = `Hola, quiero cotizar un proyecto web:
 
 Plan: ${plan}
 Dominio: ${plan === "full" ? dominio : "No aplica"}
+Mantenimiento: ${mantenimiento > 0 ? `${mantenimiento * 2} meses` : "No incluido"}
 
 Precio estimado: $${precio}`;
 
@@ -97,30 +100,26 @@ Precio estimado: $${precio}`;
           Frontend + Backend
         </button>
 
-        {/* INFO PLAN */}
         {plan === "front" && (
           <p style={info}>
-            Incluye diseño completo de la página, desarrollo visual personalizado,
-            documentación del frontend y estructura lista para integrarse con backend.
+            Incluye diseño completo, desarrollo visual, documentación y estructura lista.
           </p>
         )}
 
         {plan === "back" && (
           <p style={info}>
-            Incluye lógica del sistema, base de datos, funcionalidades internas
-            y documentación completa del backend.
+            Incluye lógica, base de datos y funcionalidades internas.
           </p>
         )}
 
         {plan === "full" && (
           <p style={info}>
-            Incluye frontend + backend, desarrollo completo del sistema,
-            documentación total, despliegue en internet y acompañamiento continuo.
+            Incluye desarrollo completo, documentación y despliegue.
           </p>
         )}
       </div>
 
-      {/* DOMINIO SOLO SI FULL */}
+      {/* DOMINIO */}
       {plan === "full" && (
         <div style={box}>
           <p>Tipo de dominio:</p>
@@ -145,19 +144,50 @@ Precio estimado: $${precio}`;
 
           {dominio === "gratis" && (
             <p style={info}>
-              Tu web estará online sin costo usando plataformas como Vercel.
-              Ideal para comenzar rápido.
+              Publicación sin costo con plataformas modernas.
             </p>
           )}
 
           {dominio === "pago" && (
             <p style={info}>
-              Dominio profesional (ej: tunegocio.com). Mejora la confianza de tus clientes.
-              Tiene un costo anual aproximado de $60.000.
+              Dominio profesional con costo anual aproximado de $60.000.
             </p>
           )}
         </div>
       )}
+
+      {/* 🔥 MANTENIMIENTO */}
+      <div style={box}>
+        <p>Mantenimiento (opcional):</p>
+
+        <div style={contadorBox}>
+
+          <button
+            style={planBtn}
+            onClick={() => setMantenimiento(Math.max(0, mantenimiento - 1))}
+          >
+            -
+          </button>
+
+          <span>
+            {mantenimiento} → {mantenimiento * 2} meses
+          </span>
+
+          <button
+            style={planBtn}
+            onClick={() => setMantenimiento(mantenimiento + 1)}
+          >
+            +
+          </button>
+
+        </div>
+
+        {mantenimiento > 0 && (
+          <p style={info}>
+            Incluye soporte y actualizaciones durante {mantenimiento * 2} meses.
+          </p>
+        )}
+      </div>
 
       {/* PRECIO */}
       <h3>Total estimado: ${precio}</h3>
@@ -180,7 +210,7 @@ Precio estimado: $${precio}`;
 }
 
 //////////////////////////////////////////////////////////////////
-// 🎨 ESTILOS
+// 🎨 ESTILOS (NO TOCADOS + SOLO UNO NUEVO)
 //////////////////////////////////////////////////////////////////
 
 const wrapper = {
@@ -275,6 +305,14 @@ const planBtn = {
   cursor: "pointer",
   background: "#1f2a40",
   color: "#CCD6F6"
+};
+
+// 🔥 NUEVO (único añadido)
+const contadorBox = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  gap: "10px"
 };
 
 export default TrabajemosPage;
