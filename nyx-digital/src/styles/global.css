@@ -1,19 +1,53 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #0B0B0F;
-  color: #EDEDED;
+  background: radial-gradient(circle at top, #112240, #0A192F 70%);
+  color: #CCD6F6;
 }
 
+/* efecto estrellas */
+body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: url("https://www.transparenttextures.com/patterns/stardust.png");
+  opacity: 0.15;
+  z-index: -1;
+}
 button {
-  background-color: #7B2CBF;
-  color: white;
+  background: linear-gradient(135deg, #64FFDA, #00E5FF);
+  color: #0A192F;
   border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 14px 28px;
+  border-radius: 12px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #9D4EDD;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(100, 255, 218, 0.4);
+}
+
+button:active {
+  transform: scale(0.96);
+}
+
+a:hover {
+  background: rgba(100, 255, 218, 0.1);
+  color: #64FFDA;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
