@@ -26,7 +26,7 @@ function Footer() {
           <p>📱 302 835 9211</p>
 
           <a
-            href="https://wa.me/573028359211"
+            href="https://wa.me/573028359211?text=Hola%20Nyx%20Digital,%20vi%20su%20p%C3%A1gina%20web%20y%20me%20gustar%C3%ADa%20cotizar%20un%20proyecto%20para%20mi%20negocio.%20%C2%BFPodemos%20hablar%20ahora?"
             target="_blank"
             style={link}
           >

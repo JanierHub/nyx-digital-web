@@ -1,24 +1,52 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
+import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
 import ServicesPage from "./pages/ServicesPage";
+import ProjectsPage from "./pages/ProjectsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import TrabajemosPage from "./pages/TrabajemosPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import MockupEcommerce from "./pages/MockupEcommerce";
+import MockupBanking from "./pages/MockupBanking";
+import MockupFitness from "./pages/MockupFitness";
+import { AuthProvider } from "./components/AuthProvider";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/servicios" element={<ServicesPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contacto" element={<ContactPage />} />
-        <Route path="/trabajemos" element={<TrabajemosPage />} />
-      </Routes>
+      <AuthProvider>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/servicios" element={<ServicesPage />} />
+          <Route path="/proyectos" element={<ProjectsPage />} />
+          <Route path="/nosotros" element={<AboutPage />} />
+          <Route path="/contacto" element={<ContactPage />} />
+          <Route path="/trabajemos" element={<TrabajemosPage />} />
+          
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/admin" element={
+            <ProtectedRoute adminOnly>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          
+          {/* Mockup Pages */}
+          <Route path="/mockup-ecommerce" element={<MockupEcommerce />} />
+          <Route path="/mockup-banking" element={<MockupBanking />} />
+          <Route path="/mockup-fitness" element={<MockupFitness />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

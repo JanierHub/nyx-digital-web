@@ -1,10 +1,32 @@
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../components/AuthProvider";
 
 function AboutPage() {
   const navigate = useNavigate();
+  const { theme } = useAuthContext();
+
+  // Colores dinámicos según el tema
+  const getThemeColors = () => {
+    if (theme === 'light') {
+      return {
+        background: '#ffffff',
+        color: '#000000',
+        cardBg: '#f8f9fa',
+        borderColor: '#dee2e6',
+        textSecondary: '#6c757d'
+      };
+    }
+    return {
+      background: 'linear-gradient(135deg, #112240, #0A192F)',
+      color: '#CCD6F6',
+      cardBg: 'rgba(10,25,47,0.9)',
+      borderColor: 'rgba(100,255,218,0.2)',
+      textSecondary: '#8892B0'
+    };
+  };
 
   return (
-    <div style={container}>
+    <div style={{...container, background: getThemeColors().background, color: getThemeColors().color}}>
 
       {/* HERO */}
       <section style={hero}>
@@ -29,11 +51,11 @@ function AboutPage() {
 
             <h2>¿Quién está detrás?</h2>
 
-            <p style={text}>
+            <p style={{color: theme === 'light' ? '#000000' : '#8892B0', marginTop: "15px"}}>
               Soy Janier Farid Quiñones, desarrollador web enfocado en crear soluciones digitales modernas, funcionales y orientadas al crecimiento de cada negocio.
             </p>
 
-            <p style={text}>
+            <p style={{color: theme === 'light' ? '#000000' : '#8892B0', marginTop: "15px"}}>
               Mi objetivo es ayudarte a construir una presencia digital sólida que realmente genere resultados y haga crecer tu negocio.
             </p>
 
@@ -50,19 +72,43 @@ function AboutPage() {
 
         <div style={grid}>
 
-          <div style={card}>
+          <div style={{
+            background: theme === 'light' ? '#f8f9fa' : "rgba(10,25,47,0.9)",
+            padding: "20px",
+            borderRadius: "12px",
+            width: "250px",
+            border: theme === 'light' ? '1px solid #dee2e6' : "1px solid rgba(100,255,218,0.2)",
+            textAlign: "center",
+            color: theme === 'light' ? '#000000' : '#CCD6F6'
+          }}>
             <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" style={img}/>
             <h3>Resultados reales</h3>
             <p>Tu web no es solo diseño, es una herramienta para crecer.</p>
           </div>
 
-          <div style={card}>
+          <div style={{
+            background: theme === 'light' ? '#f8f9fa' : "rgba(10,25,47,0.9)",
+            padding: "20px",
+            borderRadius: "12px",
+            width: "250px",
+            border: theme === 'light' ? '1px solid #dee2e6' : "1px solid rgba(100,255,218,0.2)",
+            textAlign: "center",
+            color: theme === 'light' ? '#000000' : '#CCD6F6'
+          }}>
             <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a" style={img}/>
             <h3>Diseño personalizado</h3>
             <p>Cada proyecto es único y adaptado a tu negocio.</p>
           </div>
 
-          <div style={card}>
+          <div style={{
+            background: theme === 'light' ? '#f8f9fa' : "rgba(10,25,47,0.9)",
+            padding: "20px",
+            borderRadius: "12px",
+            width: "250px",
+            border: theme === 'light' ? '1px solid #dee2e6' : "1px solid rgba(100,255,218,0.2)",
+            textAlign: "center",
+            color: theme === 'light' ? '#000000' : '#CCD6F6'
+          }}>
             <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" style={img}/>
             <h3>Acompañamiento</h3>
             <p>Te acompaño durante todo el proceso.</p>
@@ -185,7 +231,8 @@ const card = {
   borderRadius: "12px",
   width: "250px",
   border: "1px solid rgba(100,255,218,0.2)",
-  textAlign: "center"
+  textAlign: "center",
+  color: "#CCD6F6"
 };
 
 const img = {

@@ -37,8 +37,17 @@ function TrabajemosPage() {
 
         </div>
 
-        <button style={cta} onClick={() => setOpen(true)}>
-          Cotizar proyecto
+        <button 
+          style={cta} 
+          onClick={() => {
+            if (open) {
+              setOpen(false);
+            } else {
+              setOpen(true);
+            }
+          }}
+        >
+          {open ? "Cerrar cotización" : "Cotizar proyecto"}
         </button>
 
       </div>
@@ -57,6 +66,7 @@ function Cotizador({ onClose }) {
   const [plan, setPlan] = useState(null);
   const [dominio, setDominio] = useState("gratis");
   const [mantenimiento, setMantenimiento] = useState(0); // 🔥 nuevo
+  const [isClosing, setIsClosing] = useState(false); // para controlar el texto del botón
 
   let precio = 0;
 
@@ -79,24 +89,72 @@ Mantenimiento: ${mantenimiento > 0 ? `${mantenimiento * 2} meses` : "No incluido
 
 Precio estimado: $${precio}`;
 
-  return (
-    <div style={drawer}>
+  // Reset scroll al cambiar de plan
+  const handlePlanChange = (newPlan) => {
+    setPlan(newPlan);
+    // Resetear scroll al inicio del cotizador
+    const cotizadorElement = document.querySelector('[data-cotizador="true"]');
+    if (cotizadorElement) {
+      cotizadorElement.scrollTop = 0;
+    }
+  };
 
-      <h2>Cotización</h2>
+  return (
+    <div style={drawer} data-cotizador="true">
+
+      {/* Botón de cerrar flotante */}
+      <button 
+        style={{
+          position: "absolute",
+          top: "15px",
+          right: "15px",
+          background: "rgba(10,25,47,0.9)",
+          border: "1px solid rgba(100,255,218,0.3)",
+          borderRadius: "50%",
+          width: "40px",
+          height: "40px",
+          cursor: "pointer",
+          fontSize: "20px",
+          color: "#64FFDA",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.3s ease",
+          zIndex: "200",
+          boxShadow: "0 4px 15px rgba(0,0,0,0.3)"
+        }} 
+        onClick={onClose}
+        onMouseOver={(e) => {
+          e.target.style.background = "rgba(231, 76, 60, 0.9)";
+          e.target.style.borderColor = "#e74c3c";
+          e.target.style.color = "#ffffff";
+          e.target.style.transform = "scale(1.1)";
+        }}
+        onMouseOut={(e) => {
+          e.target.style.background = "rgba(10,25,47,0.9)";
+          e.target.style.borderColor = "rgba(100,255,218,0.3)";
+          e.target.style.color = "#64FFDA";
+          e.target.style.transform = "scale(1)";
+        }}
+      >
+        ×
+      </button>
+
+      <h2 style={{ marginTop: "10px" }}>Cotización</h2>
 
       {/* PLANES */}
       <div style={box}>
         <p>Selecciona un plan:</p>
 
-        <button style={planBtn} onClick={() => setPlan("front")}>
+        <button style={planBtn} onClick={() => handlePlanChange("front")}>
           Frontend
         </button>
 
-        <button style={planBtn} onClick={() => setPlan("back")}>
+        <button style={planBtn} onClick={() => handlePlanChange("back")}>
           Backend
         </button>
 
-        <button style={planBtn} onClick={() => setPlan("full")}>
+        <button style={planBtn} onClick={() => handlePlanChange("full")}>
           Frontend + Backend
         </button>
 
@@ -203,8 +261,6 @@ Precio estimado: $${precio}`;
         </button>
       </a>
 
-      <button onClick={onClose}>Cerrar</button>
-
     </div>
   );
 }
@@ -272,15 +328,16 @@ const cta = {
 const drawer = {
   position: "fixed",
   right: 0,
-  top: 0,
+  top: "80px", // Espacio para el navbar
   width: "350px",
-  height: "100%",
+  height: "calc(100% - 80px)", // Ajustar altura para no ser tapado
   background: "#0A192F",
   padding: "30px",
   boxShadow: "-10px 0 30px rgba(0,0,0,0.5)",
   display: "flex",
   flexDirection: "column",
-  gap: "15px"
+  gap: "15px",
+  overflowY: "auto"
 };
 
 const box = {
