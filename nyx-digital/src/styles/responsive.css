@@ -298,6 +298,85 @@
 }
 
 /* ================================
+   MOBILE BUTTON IMPROVEMENTS
+   ================================ */
+@media (max-width: 768px) {
+  /* All buttons mobile-friendly */
+  button, .btn, [class*="button"], [class*="btn"] {
+    min-height: 48px !important;
+    min-width: 44px !important;
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 8px 0 !important;
+  }
+
+  /* Navigation buttons */
+  .mobile-menu-btn {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: rgba(100, 255, 218, 0.1) !important;
+    border: 1px solid #64FFDA !important;
+    border-radius: 8px !important;
+  }
+
+  /* Form elements */
+  input, textarea, select {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Labels */
+  label, [class*="label"] {
+    font-size: 14px !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Cards and containers */
+  .card, [class*="card"], .service-card, .project-card {
+    padding: 20px !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Text sizes */
+  h1, [class*="h1"] {
+    font-size: clamp(1.75rem, 7vw, 2.2rem) !important;
+    line-height: 1.3 !important;
+  }
+
+  h2, [class*="h2"] {
+    font-size: clamp(1.5rem, 6vw, 1.8rem) !important;
+  }
+
+  h3, [class*="h3"] {
+    font-size: clamp(1.25rem, 5vw, 1.5rem) !important;
+  }
+
+  p, [class*="text"] {
+    font-size: clamp(0.9rem, 4vw, 1rem) !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* ================================
    LOGIN PAGE MOBILE STYLES
    ================================ */
 @media (max-width: 768px) {
@@ -313,8 +392,8 @@
   [class*="login-container"] input,
   form input {
     font-size: 16px !important;
-    padding: 12px 16px !important;
-    margin-bottom: 12px !important;
+    padding: 14px 16px !important;
+    margin-bottom: 14px !important;
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
@@ -325,28 +404,38 @@
   form button,
   button[type="submit"] {
     width: 100% !important;
-    padding: 14px 20px !important;
+    padding: 16px 20px !important;
     font-size: 16px !important;
-    margin-top: 10px !important;
+    margin-top: 12px !important;
     min-height: 48px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    font-weight: 600 !important;
   }
 
   .login-container label,
   [class*="login-container"] label,
   form label {
     font-size: 14px !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 8px !important;
     display: block !important;
+    font-weight: 500 !important;
   }
 
   .login-toggle-btn,
   [class*="login-toggle"] {
     width: 100% !important;
-    padding: 12px !important;
+    padding: 14px !important;
     font-size: 14px !important;
+    margin: 10px 0 !important;
+  }
+
+  .login-container h2,
+  [class*="login-container"] h2 {
+    font-size: 1.6rem !important;
+    margin-bottom: 24px !important;
+    text-align: center !important;
   }
 }
 
