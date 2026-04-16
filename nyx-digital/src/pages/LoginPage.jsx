@@ -22,38 +22,88 @@ function LoginPage() {
     });
   };
 
+  const validateEmail = (email) => {
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    return gmailRegex.test(email);
+  };
+
+  const validatePassword = (password) => {
+    const minLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    return {
+      valid: minLength && hasUppercase && hasLowercase && hasNumber && hasSymbol,
+      errors: {
+        minLength: !minLength,
+        hasUppercase: !hasUppercase,
+        hasLowercase: !hasLowercase,
+        hasNumber: !hasNumber,
+        hasSymbol: !hasSymbol
+      }
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    // Validaciones
-    if (!formData.email || !formData.password) {
-      setError("Por favor completa todos los campos");
-      setLoading(false);
-      return;
-    }
-
+    // Validaciones automáticas específicas
     if (isRegistering) {
-      if (!formData.name) {
-        setError("Por favor ingresa tu nombre");
+      // Validar nombre
+      if (!formData.name || formData.name.trim().length < 2) {
+        setError("❌ Error: El nombre debe tener al menos 2 caracteres");
         setLoading(false);
         return;
       }
       
+      if (formData.name.trim().length > 50) {
+        setError("❌ Error: El nombre no puede exceder 50 caracteres");
+        setLoading(false);
+        return;
+      }
+
+      // Validar que sea solo Gmail
+      if (!validateEmail(formData.email)) {
+        setError("❌ Error: Solo se permiten correos @gmail.com");
+        setLoading(false);
+        return;
+      }
+
+      // Validar que las contraseñas coincidan
       if (formData.password !== formData.confirmPassword) {
-        setError("Las contraseñas no coinciden");
+        setError("❌ Error: Las contraseñas no coinciden");
         setLoading(false);
         return;
       }
 
-      if (formData.password.length < 6) {
-        setError("La contraseña debe tener al menos 6 caracteres");
+      // Validar contraseña segura
+      const passwordCheck = validatePassword(formData.password);
+      if (!passwordCheck.valid) {
+        let errorMsg = "❌ Error: La contraseña debe contener:\n";
+        if (passwordCheck.errors.minLength) errorMsg += "• Mínimo 8 caracteres\n";
+        if (passwordCheck.errors.hasUppercase) errorMsg += "• Al menos una MAYÚSCULA\n";
+        if (passwordCheck.errors.hasLowercase) errorMsg += "• Al menos una minúscula\n";
+        if (passwordCheck.errors.hasNumber) errorMsg += "• Al menos un número (0-9)\n";
+        if (passwordCheck.errors.hasSymbol) errorMsg += "• Al menos un símbolo (!@#$%^&*)\n";
+        
+        setError(errorMsg);
         setLoading(false);
         return;
       }
+    } else {
+      // Login validations
+      if (!formData.email || !formData.password) {
+        setError("❌ Error: Por favor ingresa correo y contraseña");
+        setLoading(false);
+        return;
+      }
+    }
 
-      // Registro
+    // Registro
       const result = await register({
         email: formData.email,
         password: formData.password,
@@ -149,14 +199,18 @@ function LoginPage() {
                 marginBottom: "8px",
                 fontSize: "0.9rem"
               }}>
-                Nombre completo
+                Nombre completo <span style={{color: "#64FFDA", fontSize: "0.8rem"}}>(solo letras)</span>
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
-                placeholder="Tu nombre"
+                onChange={(e) => {
+                  // Solo permitir letras y espacios
+                  const value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                  setFormData({...formData, name: value});
+                }}
+                placeholder="Tu nombre (ej: Juan Pérez)"
                 style={{
                   width: "100%",
                   padding: "12px",
@@ -187,14 +241,14 @@ function LoginPage() {
               marginBottom: "8px",
               fontSize: "0.9rem"
             }}>
-              Correo electrónico
+              Correo electrónico <span style={{color: "#64FFDA", fontSize: "0.8rem"}}>(@gmail.com)</span>
             </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="tu@email.com"
+              placeholder="tu@gmail.com"
               style={{
                 width: "100%",
                 padding: "12px",
@@ -224,14 +278,14 @@ function LoginPage() {
               marginBottom: "8px",
               fontSize: "0.9rem"
             }}>
-              Contraseña
+              Contraseña <span style={{color: "#64FFDA", fontSize: "0.8rem"}}>(8+ caracteres, mayúscula, número, símbolo)</span>
             </label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Tu contraseña"
+              placeholder="Contraseña segura"
               style={{
                 width: "100%",
                 padding: "12px",
