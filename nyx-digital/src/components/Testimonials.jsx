@@ -6,7 +6,8 @@ function Testimonials() {
   const { user, theme, isAdmin } = useAuthContext();
   const [reviews, setReviews] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [newReview, setNewReview] = useState({ name: "", text: "" });
+  const [newReview, setNewReview] = useState({ name: "", text: "", project: "", rating: 5, photo: null });
+  const [photoPreview, setPhotoPreview] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +31,22 @@ function Testimonials() {
     }
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        setError("La foto debe ser menor a 2MB");
+        return;
+      }
+      setNewReview({...newReview, photo: file});
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -40,20 +57,65 @@ function Testimonials() {
     }
 
     try {
-      const response = await reviewsAPI.create({
-        name: newReview.name,
-        text: newReview.text
-      });
+      const formData = new FormData();
+      formData.append('name', newReview.name);
+      formData.append('text', newReview.text);
+      formData.append('project', newReview.project);
+      formData.append('rating', newReview.rating);
+      if (newReview.photo) {
+        formData.append('photo', newReview.photo);
+      }
+
+      const response = await reviewsAPI.create(formData);
       
       if (response.data?.review) {
         setReviews([response.data.review, ...reviews]);
-        setNewReview({ name: "", text: "" });
+        setNewReview({ name: "", text: "", project: "", rating: 5, photo: null });
+        setPhotoPreview(null);
         setShowForm(false);
       }
     } catch (error) {
       console.error("Error creating review:", error);
       setError(error.response?.data?.message || "Error al crear reseña");
     }
+  };
+
+  const renderStars = (rating) => {
+    return (
+      <div style={{ display: "flex", gap: "2px", fontSize: "1.2rem" }}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <span key={star} style={{ color: star <= rating ? '#FFD700' : '#ddd' }}>
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const StarRatingInput = () => {
+    return (
+      <div style={{ display: "flex", gap: "5px", marginBottom: "15px", justifyContent: "center" }}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => setNewReview({...newReview, rating: star})}
+            style={{
+              background: "none",
+              border: "none",
+              fontSize: "1.8rem",
+              cursor: "pointer",
+              color: star <= newReview.rating ? '#FFD700' : isLight ? '#dee2e6' : 'rgba(100,255,218,0.3)',
+              transition: "transform 0.2s"
+            }}
+            onMouseOver={(e) => e.target.style.transform = "scale(1.2)"}
+            onMouseOut={(e) => e.target.style.transform = "scale(1)"}
+          >
+            ★
+          </button>
+        ))}
+      </div>
+    );
   };
 
   const handleLike = async (id) => {
@@ -297,26 +359,81 @@ function Testimonials() {
       {showForm && (
         <form style={styles.form} onSubmit={handleSubmit}>
           {error && <div style={styles.error}>{error}</div>}
+          
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ display: "block", color: isLight ? '#495057' : '#CCD6F6', marginBottom: "5px", fontSize: "0.9rem" }}>
+              Tu calificación
+            </label>
+            <StarRatingInput />
+          </div>
+          
           <input
             type="text"
-            placeholder="Tu nombre"
+            placeholder="Tu nombre completo"
             value={newReview.name}
             onChange={(e) => setNewReview({...newReview, name: e.target.value})}
             style={styles.input}
             maxLength={50}
             required
           />
+          
+          <input
+            type="text"
+            placeholder="¿Qué proyecto te hicimos? (ej: E-commerce Tesla)"
+            value={newReview.project}
+            onChange={(e) => setNewReview({...newReview, project: e.target.value})}
+            style={styles.input}
+            maxLength={100}
+          />
+          
           <textarea
-            placeholder="Comparte tu experiencia..."
+            placeholder="Comparte tu experiencia con nosotros..."
             value={newReview.text}
             onChange={(e) => setNewReview({...newReview, text: e.target.value})}
             style={styles.textarea}
-            maxLength={300}
+            maxLength={500}
             required
           />
+          
+          <div style={{ marginBottom: "15px" }}>
+            <label style={{ 
+              display: "block", 
+              padding: "12px", 
+              background: isLight ? '#f8f9fa' : 'rgba(10,25,47,0.5)', 
+              border: `1px dashed ${isLight ? '#dee2e6' : 'rgba(100,255,218,0.3)'}`,
+              borderRadius: "8px",
+              cursor: "pointer",
+              textAlign: "center",
+              color: isLight ? '#6c757d' : '#8892B0'
+            }}>
+              {photoPreview ? '📷 Cambiar foto' : '📷 Agregar tu foto (opcional)'}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                style={{ display: "none" }}
+              />
+            </label>
+            {photoPreview && (
+              <div style={{ marginTop: "10px", textAlign: "center" }}>
+                <img 
+                  src={photoPreview} 
+                  alt="Preview" 
+                  style={{ 
+                    width: "80px", 
+                    height: "80px", 
+                    borderRadius: "50%", 
+                    objectFit: "cover",
+                    border: "3px solid #64FFDA"
+                  }} 
+                />
+              </div>
+            )}
+          </div>
+          
           <div>
-            <button type="submit" style={styles.submitButton}>Publicar</button>
-            <button type="button" style={styles.cancelButton} onClick={() => setShowForm(false)}>Cancelar</button>
+            <button type="submit" style={styles.submitButton}>⭐ Publicar Reseña</button>
+            <button type="button" style={styles.cancelButton} onClick={() => {setShowForm(false); setPhotoPreview(null);}}>Cancelar</button>
           </div>
         </form>
       )}
@@ -333,23 +450,71 @@ function Testimonials() {
             key={review._id} 
             style={{...styles.card, ...(review.hidden ? styles.cardHidden : {})}}
           >
-            {index === 0 && !review.hidden && <span style={styles.badge}>Más reciente</span>}
+            {index === 0 && !review.hidden && <span style={styles.badge}>⭐ Más reciente</span>}
             {review.hidden && <span style={styles.hiddenBadge}>OCULTA</span>}
             
-            <p style={styles.cardText}>"{review.text}"</p>
-            
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "15px" }}>
+              {review.photo ? (
+                <img 
+                  src={review.photo} 
+                  alt={review.name}
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "3px solid #64FFDA",
+                    boxShadow: "0 4px 10px rgba(100,255,218,0.3)"
+                  }}
+                />
+              ) : (
+                <div style={{
+                  width: "60px",
+                  height: "60px",
+                  borderRadius: "50%",
+                  background: isLight ? 'linear-gradient(135deg, #667eea, #764ba2)' : 'linear-gradient(135deg, #64FFDA, #00E5FF)',
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "1.5rem",
+                  color: isLight ? '#ffffff' : '#0A192F',
+                  fontWeight: "bold"
+                }}>
+                  {review.name.charAt(0).toUpperCase()}
+                </div>
+              )}
               <div>
-                <div style={styles.cardAuthor}>- {review.name}</div>
+                <div style={styles.cardAuthor}>{review.name}</div>
                 <div style={styles.cardDate}>
                   {new Date(review.createdAt).toLocaleDateString('es-ES')}
                 </div>
+                {renderStars(review.rating || 5)}
               </div>
+            </div>
+            
+            {review.project && (
+              <div style={{
+                background: isLight ? 'rgba(102, 126, 234, 0.1)' : 'rgba(100,255,218,0.1)',
+                padding: "6px 12px",
+                borderRadius: "20px",
+                fontSize: "0.8rem",
+                color: isLight ? '#667eea' : '#64FFDA',
+                marginBottom: "12px",
+                display: "inline-block",
+                fontWeight: "600"
+              }}>
+                📁 {review.project}
+              </div>
+            )}
+            
+            <p style={styles.cardText}>"{review.text}"</p>
+            
+            <div style={{display: "flex", justifyContent: "flex-end", alignItems: "center"}}>
               <button 
                 style={styles.likeButton}
                 onClick={() => handleLike(review._id)}
               >
-                ❤️ {review.likes}
+                ❤️ {review.likes || 0}
               </button>
             </div>
             
