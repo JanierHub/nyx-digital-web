@@ -30,7 +30,7 @@ function App() {
           <Route path="/trabajemos" element={<TrabajemosPage />} />
           
           <Route path="/profile" element={
-            <ProtectedRoute>
+            <ProtectedRoute adminOnly>
               <ProfilePage />
             </ProtectedRoute>
           } />
