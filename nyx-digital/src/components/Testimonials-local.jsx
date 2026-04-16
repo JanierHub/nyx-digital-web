@@ -1,6 +1,28 @@
 import { useState, useEffect } from "react";
 import { useAuthContext } from "./AuthProvider";
-import { reviewsAPI } from "../services/api.js";
+
+// Lista de palabras prohibidas para filtrar
+const BAD_WORDS = [
+  'puta', 'puto', 'mierda', 'carajo', 'chingar', 'chingada', 'verga', 'pendejo', 'pendeja',
+  'cabrón', 'cabron', 'joder', 'hostia', 'coño', 'gilipollas', 'maricón', 'maricon',
+  'zorra', 'zorr', 'perra', 'puñeta', 'culo', 'pene', 'vagina', 'pito', 'teta', 'tetas',
+  'mastur', 'sexo', 'porn', 'xxx', 'cp', 'pedof', 'violad', 'violaci', 'abus',
+  'estupido', 'estúpido', 'idiota', 'imbecil', 'imbécil', 'tonto', 'retrasado', 'mongol',
+  'maldit', 'diabl', 'satan', 'infiern', 'muer', 'matar', 'asesin', 'terror', 'bomba',
+  'droga', 'cocaína', 'marihuan', 'cocain', 'heroin', 'meth', 'fentanil',
+  'hdp', 'ptm', 'cm', 'vrg', 'pk', 'hp', 'chtm', 'mamahuev', 'sape', 'sap',
+  'gonorre', 'malparid', 'huevón', 'cachón', 'carechimb', 'chimba', 'guevon',
+  'gonorrea', 'malparido', 'malparida', 'cachón', 'cachon', 'carechimba'
+];
+
+function filterProfanity(text) {
+  let filtered = text;
+  BAD_WORDS.forEach(word => {
+    const regex = new RegExp(word, 'gi');
+    filtered = filtered.replace(regex, '***');
+  });
+  return filtered;
+}
 
 function Testimonials() {
   const { user, theme, isAdmin } = useAuthContext();
@@ -8,29 +30,37 @@ function Testimonials() {
   const [showForm, setShowForm] = useState(false);
   const [newReview, setNewReview] = useState({ name: "", text: "" });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  // Cargar reseñas desde el backend
+  // Cargar reseñas del localStorage
   useEffect(() => {
-    loadReviews();
-  }, [isAdmin]);
-
-  const loadReviews = async () => {
-    try {
-      setLoading(true);
-      const response = await reviewsAPI.getAll(isAdmin);
-      if (response.data?.reviews) {
-        setReviews(response.data.reviews);
-      }
-    } catch (error) {
-      console.error("Error loading reviews:", error);
-      setError("Error al cargar reseñas");
-    } finally {
-      setLoading(false);
+    const saved = localStorage.getItem('nyx_reviews');
+    if (saved) {
+      setReviews(JSON.parse(saved));
+    } else {
+      // Reseñas iniciales
+      const initial = [
+        { id: 1, name: "María Rodríguez", text: "Mi negocio creció gracias a esta web. Increíble trabajo!", date: "2024-03-15", likes: 12, hidden: false },
+        { id: 2, name: "Carlos Martínez", text: "Profesional y rápido, recomendado al 100%.", date: "2024-03-10", likes: 8, hidden: false },
+        { id: 3, name: "Ana López", text: "Ahora tengo presencia online real. Gracias Nyx Digital!", date: "2024-03-05", likes: 15, hidden: false }
+      ];
+      setReviews(initial);
+      localStorage.setItem('nyx_reviews', JSON.stringify(initial));
     }
+  }, []);
+
+  // Guardar reseñas cuando cambian
+  useEffect(() => {
+    if (reviews.length > 0) {
+      localStorage.setItem('nyx_reviews', JSON.stringify(reviews));
+    }
+  }, [reviews]);
+
+  const checkProfanity = (text) => {
+    const lowerText = text.toLowerCase();
+    return BAD_WORDS.some(word => lowerText.includes(word));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     
@@ -39,66 +69,53 @@ function Testimonials() {
       return;
     }
 
-    try {
-      const response = await reviewsAPI.create({
-        name: newReview.name,
-        text: newReview.text
-      });
-      
-      if (response.data?.review) {
-        setReviews([response.data.review, ...reviews]);
-        setNewReview({ name: "", text: "" });
-        setShowForm(false);
-      }
-    } catch (error) {
-      console.error("Error creating review:", error);
-      setError(error.response?.data?.message || "Error al crear reseña");
+    // Verificar groserías
+    if (checkProfanity(newReview.name) || checkProfanity(newReview.text)) {
+      setError("Tu reseña contiene lenguaje inapropiado. Por favor sé respetuoso.");
+      return;
     }
+
+    // Filtrar groserías
+    const filteredName = filterProfanity(newReview.name);
+    const filteredText = filterProfanity(newReview.text);
+
+    const review = {
+      id: Date.now(),
+      name: filteredName,
+      text: filteredText,
+      date: new Date().toISOString().split('T')[0],
+      likes: 0,
+      hidden: false
+    };
+
+    setReviews([review, ...reviews]);
+    setNewReview({ name: "", text: "" });
+    setShowForm(false);
   };
 
-  const handleLike = async (id) => {
-    try {
-      const response = await reviewsAPI.like(id);
-      if (response.data?.review) {
-        setReviews(reviews.map(r => 
-          r._id === id ? response.data.review : r
-        ));
-      }
-    } catch (error) {
-      console.error("Error liking review:", error);
-      if (error.response?.data?.message === 'Already liked') {
-        setError("Ya le diste like a esta reseña");
-      }
-    }
+  const handleLike = (id) => {
+    setReviews(reviews.map(r => 
+      r.id === id ? { ...r, likes: r.likes + 1 } : r
+    ));
   };
 
-  const toggleHideReview = async (id) => {
+  const toggleHideReview = (id) => {
     if (!isAdmin) return;
-    try {
-      const response = await reviewsAPI.toggleHide(id);
-      if (response.data?.review) {
-        setReviews(reviews.map(r => 
-          r._id === id ? response.data.review : r
-        ));
-      }
-    } catch (error) {
-      console.error("Error toggling review:", error);
-    }
+    setReviews(reviews.map(r => 
+      r.id === id ? { ...r, hidden: !r.hidden } : r
+    ));
   };
 
-  const deleteReview = async (id) => {
+  const deleteReview = (id) => {
     if (!isAdmin) return;
-    if (!confirm('¿Estás seguro de eliminar esta reseña permanentemente?')) return;
-    
-    try {
-      await reviewsAPI.delete(id);
-      setReviews(reviews.filter(r => r._id !== id));
-    } catch (error) {
-      console.error("Error deleting review:", error);
+    if (confirm('¿Estás seguro de eliminar esta reseña permanentemente?')) {
+      setReviews(reviews.filter(r => r.id !== id));
     }
   };
 
   const isLight = theme === 'light';
+  
+  // Filtrar solo reseñas visibles para usuarios no-admin
   const visibleReviews = isAdmin ? reviews : reviews.filter(r => !r.hidden);
 
   const styles = {
@@ -131,14 +148,18 @@ function Testimonials() {
       fontSize: "1rem",
       fontWeight: "600",
       cursor: "pointer",
-      marginBottom: "30px"
+      marginBottom: "30px",
+      transition: "all 0.3s ease",
+      boxShadow: isLight ? '0 4px 15px rgba(102,126,234,0.4)' : '0 4px 15px rgba(100,255,218,0.3)'
     },
     form: {
       maxWidth: "500px",
       margin: "0 auto 40px",
       padding: "25px",
       background: isLight ? '#ffffff' : 'rgba(17,34,64,0.8)',
-      borderRadius: "15px"
+      borderRadius: "15px",
+      border: `1px solid ${isLight ? '#dee2e6' : 'rgba(100,255,218,0.2)'}`,
+      boxShadow: isLight ? '0 4px 20px rgba(0,0,0,0.1)' : '0 4px 20px rgba(0,0,0,0.3)'
     },
     error: {
       background: "rgba(231, 76, 60, 0.1)",
@@ -146,7 +167,8 @@ function Testimonials() {
       color: "#e74c3c",
       padding: "12px",
       borderRadius: "8px",
-      marginBottom: "15px"
+      marginBottom: "15px",
+      fontSize: "0.9rem"
     },
     input: {
       width: "100%",
@@ -156,7 +178,8 @@ function Testimonials() {
       border: `1px solid ${isLight ? '#dee2e6' : 'rgba(100,255,218,0.3)'}`,
       background: isLight ? '#f8f9fa' : 'rgba(10,25,47,0.5)',
       color: isLight ? '#333333' : '#CCD6F6',
-      fontSize: "1rem"
+      fontSize: "1rem",
+      outline: "none"
     },
     textarea: {
       width: "100%",
@@ -168,7 +191,9 @@ function Testimonials() {
       color: isLight ? '#333333' : '#CCD6F6',
       fontSize: "1rem",
       minHeight: "100px",
-      resize: "vertical"
+      resize: "vertical",
+      outline: "none",
+      fontFamily: "inherit"
     },
     submitButton: {
       background: isLight ? '#28a745' : '#64FFDA',
@@ -195,15 +220,19 @@ function Testimonials() {
       gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
       gap: "25px",
       maxWidth: "1200px",
-      margin: "0 auto"
+      margin: "0 auto",
+      padding: "0 20px"
     },
     card: {
       background: isLight ? '#ffffff' : 'rgba(17,34,64,0.6)',
       padding: "25px",
       borderRadius: "15px",
       border: `1px solid ${isLight ? '#e9ecef' : 'rgba(100,255,218,0.15)'}`,
+      boxShadow: isLight ? '0 4px 15px rgba(0,0,0,0.08)' : '0 4px 15px rgba(0,0,0,0.2)',
+      transition: "all 0.3s ease",
       textAlign: "left",
-      position: "relative"
+      position: "relative",
+      opacity: 1
     },
     cardHidden: {
       opacity: 0.5,
@@ -221,6 +250,14 @@ function Testimonials() {
       fontSize: "0.7rem",
       fontWeight: "600"
     },
+    quoteIcon: {
+      fontSize: "3rem",
+      color: isLight ? '#667eea' : '#64FFDA',
+      opacity: 0.3,
+      position: "absolute",
+      top: "10px",
+      left: "15px"
+    },
     cardText: {
       fontSize: "1.1rem",
       color: isLight ? '#495057' : '#CCD6F6',
@@ -232,11 +269,20 @@ function Testimonials() {
     cardAuthor: {
       fontSize: "0.95rem",
       color: isLight ? '#667eea' : '#64FFDA',
-      fontWeight: "600"
+      fontWeight: "600",
+      marginBottom: "5px"
     },
     cardDate: {
       fontSize: "0.8rem",
       color: isLight ? '#adb5bd' : '#8892B0'
+    },
+    cardFooter: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: "15px",
+      paddingTop: "15px",
+      borderTop: `1px solid ${isLight ? '#e9ecef' : 'rgba(100,255,218,0.1)'}`
     },
     likeButton: {
       background: "transparent",
@@ -262,25 +308,31 @@ function Testimonials() {
     adminControls: {
       display: "flex",
       gap: "10px",
-      marginTop: "10px"
+      marginTop: "10px",
+      paddingTop: "10px",
+      borderTop: `1px dashed ${isLight ? '#dee2e6' : 'rgba(100,255,218,0.2)'}`
     },
     adminButton: {
       padding: "6px 12px",
       borderRadius: "6px",
       border: "none",
       fontSize: "0.8rem",
-      cursor: "pointer"
+      cursor: "pointer",
+      fontWeight: "500"
+    },
+    hideButton: {
+      background: "#f39c12",
+      color: "#ffffff"
+    },
+    showButton: {
+      background: "#27ae60",
+      color: "#ffffff"
+    },
+    deleteButton: {
+      background: "#e74c3c",
+      color: "#ffffff"
     }
   };
-
-  if (loading) {
-    return (
-      <section style={styles.section}>
-        <h2 style={styles.title}>Resultados Reales</h2>
-        <p style={{color: isLight ? '#6c757d' : '#8892B0'}}>Cargando reseñas...</p>
-      </section>
-    );
-  }
 
   return (
     <section style={styles.section}>
@@ -290,6 +342,12 @@ function Testimonials() {
       <button 
         style={styles.addButton}
         onClick={() => setShowForm(!showForm)}
+        onMouseOver={(e) => {
+          e.target.style.transform = "translateY(-2px) scale(1.05)";
+        }}
+        onMouseOut={(e) => {
+          e.target.style.transform = "translateY(0) scale(1)";
+        }}
       >
         {showForm ? "✕ Cancelar" : "+ Agregar mi reseña"}
       </button>
@@ -314,58 +372,74 @@ function Testimonials() {
             maxLength={300}
             required
           />
+          <div style={{fontSize: "0.8rem", color: isLight ? '#6c757d' : '#8892B0', marginBottom: "10px"}}>
+            {newReview.text.length}/300 caracteres
+          </div>
           <div>
-            <button type="submit" style={styles.submitButton}>Publicar</button>
-            <button type="button" style={styles.cancelButton} onClick={() => setShowForm(false)}>Cancelar</button>
+            <button type="submit" style={styles.submitButton}>Publicar reseña</button>
+            <button type="button" style={styles.cancelButton} onClick={() => {setShowForm(false); setError("");}}>Cancelar</button>
           </div>
         </form>
       )}
 
       {isAdmin && (
-        <div style={{marginBottom: "20px", color: isLight ? '#6c757d' : '#8892B0'}}>
-          Panel Admin: {reviews.filter(r => r.hidden).length} reseñas ocultas de {reviews.length} total
+        <div style={{marginBottom: "20px", fontSize: "0.9rem", color: isLight ? '#6c757d' : '#8892B0'}}>
+          Panel Admin: Tienes {reviews.filter(r => r.hidden).length} reseñas ocultas de {reviews.length} total
         </div>
       )}
 
       <div style={styles.grid}>
         {visibleReviews.map((review, index) => (
           <div 
-            key={review._id} 
-            style={{...styles.card, ...(review.hidden ? styles.cardHidden : {})}}
+            key={review.id} 
+            style={{
+              ...styles.card,
+              ...(review.hidden ? styles.cardHidden : {})
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow = isLight 
+                ? '0 8px 25px rgba(0,0,0,0.15)' 
+                : '0 8px 25px rgba(100,255,218,0.15)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = isLight 
+                ? '0 4px 15px rgba(0,0,0,0.08)' 
+                : '0 4px 15px rgba(0,0,0,0.2)';
+            }}
           >
             {index === 0 && !review.hidden && <span style={styles.badge}>Más reciente</span>}
             {review.hidden && <span style={styles.hiddenBadge}>OCULTA</span>}
-            
+            <span style={styles.quoteIcon}>"</span>
             <p style={styles.cardText}>"{review.text}"</p>
-            
-            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+            <div style={styles.cardFooter}>
               <div>
                 <div style={styles.cardAuthor}>- {review.name}</div>
-                <div style={styles.cardDate}>
-                  {new Date(review.createdAt).toLocaleDateString('es-ES')}
-                </div>
+                <div style={styles.cardDate}>{review.date}</div>
               </div>
               <button 
                 style={styles.likeButton}
-                onClick={() => handleLike(review._id)}
+                onClick={() => handleLike(review.id)}
+                title="Me gusta"
               >
-                ❤️ {review.likes}
+                â¤ {review.likes}
               </button>
             </div>
             
             {isAdmin && (
               <div style={styles.adminControls}>
                 <button 
-                  style={{...styles.adminButton, background: review.hidden ? '#27ae60' : '#f39c12', color: '#fff'}}
-                  onClick={() => toggleHideReview(review._id)}
+                  style={{...styles.adminButton, ...(review.hidden ? styles.showButton : styles.hideButton)}}
+                  onClick={() => toggleHideReview(review.id)}
                 >
-                  {review.hidden ? "👁️ Mostrar" : "🙈 Ocultar"}
+                  {review.hidden ? "â Mostrar" : "ð Ocultar"}
                 </button>
                 <button 
-                  style={{...styles.adminButton, background: '#e74c3c', color: '#fff'}}
-                  onClick={() => deleteReview(review._id)}
+                  style={{...styles.adminButton, ...styles.deleteButton}}
+                  onClick={() => deleteReview(review.id)}
                 >
-                  🗑️ Eliminar
+                  ð Eliminar
                 </button>
               </div>
             )}
@@ -374,8 +448,8 @@ function Testimonials() {
       </div>
       
       {visibleReviews.length === 0 && (
-        <div style={{padding: "40px", color: isLight ? '#6c757d' : '#8892B0'}}>
-          No hay reseñas disponibles.
+        <div style={{padding: "40px", color: isLight ? '#6c757d' : '#8892B0', fontSize: "1.1rem"}}>
+          No hay reseñas disponibles en este momento.
         </div>
       )}
     </section>

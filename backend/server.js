@@ -12,6 +12,7 @@ import contactRoutes from './routes/contact.js';
 import servicesRoutes from './routes/services.js';
 import projectsRoutes from './routes/projects.js';
 import userRoutes from './routes/users.js';
+import reviewRoutes from './routes/reviews.js';
 
 // Load environment variables
 dotenv.config();
@@ -77,6 +78,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/services', servicesRoutes);
 app.use('/api/projects', projectsRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

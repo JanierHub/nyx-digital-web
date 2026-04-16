@@ -134,6 +134,15 @@ export const usersAPI = {
   logout: () => api.post('/users/logout'),
 };
 
+// Reviews API
+export const reviewsAPI = {
+  getAll: (admin = false) => api.get('/reviews', { admin: admin.toString() }),
+  create: (reviewData) => api.post('/reviews', reviewData),
+  like: (id) => api.post(`/reviews/${id}/like`),
+  toggleHide: (id) => api.put(`/reviews/${id}/hide`),
+  delete: (id) => api.delete(`/reviews/${id}`),
+};
+
 // Health check
 export const healthAPI = {
   check: () => api.get('/health'),
