@@ -2,7 +2,7 @@ function RoleAvatar({ size = 40, role = 'user', theme = 'dark' }) {
   const isAdmin = role === 'admin';
   const isLight = theme === 'light';
 
-  // Avatar de USUARIO - Eclipse estilo Nyx (luna oscura con halo)
+
   const UserEclipse = () => (
     <div style={{
       width: `${size}px`,

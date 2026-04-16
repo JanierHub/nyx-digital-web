@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
+import { sendWelcomeEmail, sendNewUserNotification } from '../utils/emailService.js';
 
 const router = express.Router();
 
@@ -61,6 +62,22 @@ router.post('/register', [
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
+
+    // Send welcome email to user
+    try {
+      await sendWelcomeEmail({ name: user.name, email: user.email });
+    } catch (emailError) {
+      console.error('Failed to send welcome email:', emailError);
+      // Continue even if email fails
+    }
+
+    // Send notification to admin
+    try {
+      await sendNewUserNotification({ name: user.name, email: user.email, role: user.role });
+    } catch (emailError) {
+      console.error('Failed to send admin notification:', emailError);
+      // Continue even if email fails
+    }
 
     res.status(201).json({
       status: 'success',

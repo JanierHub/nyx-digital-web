@@ -351,4 +351,261 @@ export const sendConfirmationEmail = async (contactData) => {
   }
 };
 
-export default { sendContactEmail, sendConfirmationEmail };
+// Send welcome email to new user
+export const sendWelcomeEmail = async (userData) => {
+  try {
+    const transporter = createTransporter();
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+          }
+          .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+          }
+          .header {
+            background: linear-gradient(135deg, #64FFDA, #00E5FF);
+            color: #0A192F;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            margin: -30px -30px 20px -30px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+          }
+          .welcome-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+          }
+          .features {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+          }
+          .features h3 {
+            color: #0A192F;
+            margin-top: 0;
+          }
+          .features ul {
+            margin: 10px 0;
+            padding-left: 20px;
+          }
+          .features li {
+            margin: 8px 0;
+          }
+          .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #64FFDA, #00E5FF);
+            color: #0A192F;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            margin: 10px 0;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🌙 ¡Bienvenido a Nyx Digital!</h1>
+          </div>
+          
+          <p class="welcome-message">
+            Hola <strong>${userData.name}</strong>,<br><br>
+            ¡Tu cuenta ha sido creada exitosamente! Estamos emocionados de tenerte como parte de nuestra comunidad.
+          </p>
+
+          <div class="features">
+            <h3>✨ ¿Qué puedes hacer ahora?</h3>
+            <ul>
+              <li>📊 Acceder a tu panel de usuario personalizado</li>
+              <li>💬 Dejar reseñas sobre nuestros servicios</li>
+              <li>🎨 Personalizar el tema de la aplicación</li>
+              <li>📞 Contactarnos directamente para proyectos</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="https://nyx-digital.vercel.app/login" class="btn">Iniciar Sesión</a>
+          </div>
+
+          <div class="footer">
+            <p><strong>Nyx Digital</strong></p>
+            <p>Tu partner digital para el éxito</p>
+            <p>Si no creaste esta cuenta, por favor ignora este mensaje.</p>
+            <p>Fecha: ${new Date().toLocaleString('es-ES')}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || `"Nyx Digital" <${process.env.EMAIL_USER}>`,
+      to: userData.email,
+      subject: '¡Bienvenido a Nyx Digital! Tu cuenta ha sido creada 🌙',
+      html: htmlContent
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Welcome email sent successfully to:', userData.email);
+
+  } catch (error) {
+    console.error('Error sending welcome email:', error);
+    throw error;
+  }
+};
+
+// Send notification to admin when new user registers
+export const sendNewUserNotification = async (userData) => {
+  try {
+    const transporter = createTransporter();
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+          }
+          .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+          }
+          .header {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+            margin: -30px -30px 20px -30px;
+          }
+          .header h1 {
+            margin: 0;
+            font-size: 24px;
+          }
+          .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+          }
+          .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+          }
+          .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+          }
+          .info-value {
+            color: #333;
+            font-size: 14px;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎉 ¡Nuevo Usuario Registrado!</h1>
+          </div>
+          
+          <p style="font-size: 16px; color: #333;">
+            Un nuevo usuario se ha registrado en <strong>Nyx Digital</strong>.
+          </p>
+
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Nombre</div>
+              <div class="info-value">${userData.name}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Email</div>
+              <div class="info-value">${userData.email}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Rol</div>
+              <div class="info-value">${userData.role || 'Usuario'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Fecha</div>
+              <div class="info-value">${new Date().toLocaleString('es-ES')}</div>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>Este es un mensaje automático del sistema Nyx Digital</p>
+            <p>Total de usuarios registrados: Ver panel admin</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || `"Nyx Digital" <${process.env.EMAIL_USER}>`,
+      to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
+      subject: `🎉 Nuevo usuario registrado: ${userData.name}`,
+      html: htmlContent
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('New user notification sent to admin');
+
+  } catch (error) {
+    console.error('Error sending new user notification:', error);
+    throw error;
+  }
+};
+
+export default { sendContactEmail, sendConfirmationEmail, sendWelcomeEmail, sendNewUserNotification };
