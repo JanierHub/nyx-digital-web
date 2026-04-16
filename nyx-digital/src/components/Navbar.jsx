@@ -97,27 +97,6 @@ function Navbar() {
                   </div>
                 </div>
                 
-                <Link
-                  to="/profile"
-                  style={{
-                    display: "block",
-                    padding: "10px",
-                    color: "#CCD6F6",
-                    textDecoration: "none",
-                    fontSize: "14px",
-                    transition: "background 0.3s ease"
-                  }}
-                  onClick={(e) => { e.preventDefault(); setShowProfileMenu(false); handleNavigation('/profile'); }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = "rgba(100,255,218,0.1)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = "none";
-                  }}
-                >
-                  Mi Perfil
-                </Link>
-                
                 {isAdmin && (
                   <Link
                     to="/admin"
@@ -137,7 +116,7 @@ function Navbar() {
                       e.target.style.background = "none";
                     }}
                   >
-                    Panel Admin
+                    ⚙️ Panel Admin
                   </Link>
                 )}
                 
@@ -167,72 +146,30 @@ function Navbar() {
             )}
           </div>
         ) : (
-          <div style={{ position: "relative" }}>
-            <button
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
-              style={{
-                background: "rgba(100,255,218,0.1)",
-                border: "1px solid rgba(100,255,218,0.3)",
-                borderRadius: "20px",
-                color: "#64FFDA",
-                padding: "8px 16px",
-                fontSize: "14px",
-                fontWeight: "500",
-                cursor: "pointer",
-                transition: "all 0.3s ease",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px"
-              }}
-              onMouseOver={(e) => {
-                e.target.style.background = "rgba(100,255,218,0.2)";
-                e.target.style.transform = "translateY(-1px)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.background = "rgba(100,255,218,0.1)";
-                e.target.style.transform = "translateY(0)";
-              }}
-            >
-                <RoleAvatar size={24} role="user" theme="dark" />
-              Iniciar Sesión
-            </button>
-            
-            {showProfileMenu && (
-              <div style={{
-                position: "absolute",
-                top: "45px",
-                right: "0",
-                background: "rgba(10,25,47,0.95)",
-                backdropFilter: "blur(10px)",
-                border: "1px solid #1f1f2e",
-                borderRadius: "10px",
-                padding: "10px",
-                minWidth: "200px",
-                zIndex: "1000"
-              }}>
-                <Link
-                  to="/login"
-                  style={{
-                    display: "block",
-                    padding: "10px",
-                    color: "#CCD6F6",
-                    textDecoration: "none",
-                    fontSize: "14px",
-                    transition: "background 0.3s ease"
-                  }}
-                  onClick={(e) => { e.preventDefault(); setShowProfileMenu(false); handleNavigation('/login'); }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = "rgba(100,255,218,0.1)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = "none";
-                  }}
-                >
-                  Iniciar Sesión
-                </Link>
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => navigate("/login")}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "8px 16px",
+              backgroundColor: "rgba(100, 255, 218, 0.1)",
+              border: "1px solid #64FFDA",
+              borderRadius: "20px",
+              color: "#64FFDA",
+              fontSize: "0.9rem",
+              cursor: "pointer",
+              transition: "all 0.3s ease"
+            }}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = "rgba(100, 255, 218, 0.2)";
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = "rgba(100, 255, 218, 0.1)";
+            }}
+          >
+            ⚙️ Admin
+          </button>
         )}
       </div>
 
@@ -263,13 +200,11 @@ function Navbar() {
                   {user.name || user.email}
                 </div>
                 <div style={{ color: "#8892B0", fontSize: "12px" }}>
-                  {isAdmin ? "Administrador" : "Usuario"}
+                  {isAdmin && (
+                    <Link to="/admin" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>⚙️ Panel Admin</Link>
+                  )}
                 </div>
               </div>
-              <Link to="/profile" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Mi Perfil</Link>
-              {isAdmin && (
-                <Link to="/admin" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Panel Admin</Link>
-              )}
               <button 
                 style={{...mobileDropdownLink, color: "#e74c3c", textAlign: "left", background: "transparent", border: "none", width: "100%"}} 
                 onClick={() => {
@@ -281,7 +216,7 @@ function Navbar() {
               </button>
             </>
           ) : (
-            <Link to="/login" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
+            <Link to="/login" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>⚙️ Admin</Link>
           )}
         </div>
       )}
