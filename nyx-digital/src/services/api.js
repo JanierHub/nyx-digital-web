@@ -1,5 +1,6 @@
 // API base configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Production backend URL (Render)
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://nyx-digital-api.onrender.com/api';
 
 // Generic API request function
 class ApiService {
