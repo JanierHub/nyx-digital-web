@@ -251,19 +251,26 @@ function Navbar() {
       {/* Mobile Menu */}
       <div style={{...mobileMenu, ...(isMenuOpen ? mobileMenuOpen : {})}} className="mobile-menu">
         {/* Close Button */}
+        {/* Close Button */}
         <button 
           onClick={() => setIsMenuOpen(false)}
           style={{
             position: "absolute",
-            top: "10px",
-            right: "15px",
-            background: "transparent",
-            border: "none",
+            top: "15px",
+            right: "20px",
+            background: "rgba(100, 255, 218, 0.1)",
+            border: "1px solid #64FFDA",
             color: "#64FFDA",
-            fontSize: "24px",
+            fontSize: "20px",
             cursor: "pointer",
-            padding: "5px",
-            zIndex: 1000
+            padding: "8px 12px",
+            borderRadius: "8px",
+            zIndex: 1001,
+            minWidth: "44px",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
           aria-label="Cerrar menú"
         >
@@ -377,7 +384,7 @@ const mobileMenu = {
   transition: "right 0.3s ease",
   borderLeft: "1px solid #1f1f2e",
   zIndex: 999,
-  paddingTop: "50px" // Extra space for close button
+  paddingTop: "50px"
 };
 
 const mobileMenuOpen = {

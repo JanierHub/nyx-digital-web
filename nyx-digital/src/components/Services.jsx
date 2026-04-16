@@ -30,7 +30,7 @@ function Services() {
       longDescription: "Desarrollo la parte visual de tu aplicación web con las tecnologías más modernas. Me aseguro que se vea perfecta en todos los dispositivos, cargue rápido y ofrezca una experiencia increíble para tus usuarios.",
       category: "development",
       technologies: ["React", "Vue.js", "Next.js", "TailwindCSS"],
-      images: [{ url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c", alt: "Desarrollo Frontend", isMain: true }],
+      images: [{ url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&q=80&auto=format&fit=crop", alt: "Desarrollo Frontend", isMain: true }],
       features: [
         { title: "Diseño 100% Responsivo", description: "Funciona perfecto en celulares, tablets y computadoras" },
         { title: "Rendimiento Optimizado", description: "Carga rápida para mejor experiencia y SEO" },
@@ -47,7 +47,7 @@ function Services() {
       longDescription: "Construyo la estructura detrás de tu aplicación web. APIs, bases de datos, autenticación y toda la lógica que necesita tu sistema para funcionar de manera segura y eficiente.",
       category: "development",
       technologies: ["Node.js", "Express", "MongoDB", "PostgreSQL"],
-      images: [{ url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71", alt: "Desarrollo Backend", isMain: true }],
+      images: [{ url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80&auto=format&fit=crop", alt: "Desarrollo Backend", isMain: true }],
       features: [
         { title: "APIs RESTful", description: "Conexiones seguras y eficientes entre sistemas" },
         { title: "Base de Datos Optimizada", description: "Información organizada y accesible rápidamente" },
@@ -64,7 +64,7 @@ function Services() {
       longDescription: "Te entrego una solución completa: desarrollo frontend, backend, integración de bases de datos y despliegue. Una aplicación web lista para usar y funcionando en producción.",
       category: "development",
       technologies: ["React", "Node.js", "MongoDB", "Docker"],
-      images: [{ url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085", alt: "Desarrollo Full-Stack", isMain: true }],
+      images: [{ url: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80&auto=format&fit=crop", alt: "Desarrollo Full-Stack", isMain: true }],
       features: [
         { title: "Solución Completa", description: "Todo lo que necesitas en un solo proyecto" },
         { title: "Integración Perfecta", description: "Frontend y backend trabajando juntos" },
@@ -81,7 +81,7 @@ function Services() {
       longDescription: "Me encargo de poner tu aplicación web en internet. Configuro hosting, dominios, certificados SSL y todo lo necesario para que tu sitio esté accesible para todo el mundo. Incluyo opciones gratuitas y de pago según tus necesidades.",
       category: "deployment",
       technologies: ["Vercel", "Netlify", "AWS", "DigitalOcean"],
-      images: [{ url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6", alt: "Servicio de Despliegue", isMain: true }],
+      images: [{ url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&q=80&auto=format&fit=crop", alt: "Servicio de Despliegue", isMain: true }],
       features: [
         { title: "Opciones Gratuitas", description: "Despliegue sin costo mensual usando plataformas gratuitas" },
         { title: "Configuración Profesional", description: "Dominio, SSL y optimización incluidos" },
@@ -258,6 +258,7 @@ function Services() {
                 <img 
                   src={service.images?.[0]?.url} 
                   alt={service.images?.[0]?.alt}
+                  loading="lazy"
                   style={{
                     width: "100%",
                     height: "100%",
@@ -424,6 +425,7 @@ function Services() {
                     <img 
                       src={active.images?.[0]?.url} 
                       alt={active.images?.[0]?.alt}
+                      loading="eager"
                       style={{
                         width: "100%",
                         height: "200px",
