@@ -41,9 +41,9 @@ function AboutPage() {
 
         <div style={profileContainer}>
 
-          {/* FOTO (placeholder) */}
+          {/* Imagen representativa - Desarrollo digital */}
           <img
-            src="https://images.unsplash.com/photo-1607746882042-944635dfe10e"
+            src="https://images.unsplash.com/photo-1555066931-4365d14bab8c"
             style={profileImg}
           />
 
