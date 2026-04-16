@@ -250,6 +250,25 @@ function Navbar() {
 
       {/* Mobile Menu */}
       <div style={{...mobileMenu, ...(isMenuOpen ? mobileMenuOpen : {})}} className="mobile-menu">
+        {/* Close Button */}
+        <button 
+          onClick={() => setIsMenuOpen(false)}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "15px",
+            background: "transparent",
+            border: "none",
+            color: "#64FFDA",
+            fontSize: "24px",
+            cursor: "pointer",
+            padding: "5px",
+            zIndex: 1000
+          }}
+          aria-label="Cerrar menú"
+        >
+          ✕
+        </button>
         <Link to="/" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/'); }}>Inicio</Link>
         <Link to="/proyectos" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/proyectos'); }}>Proyectos</Link>
         <Link to="/nosotros" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/nosotros'); }}>Quiénes somos</Link>
@@ -357,7 +376,8 @@ const mobileMenu = {
   gap: "20px",
   transition: "right 0.3s ease",
   borderLeft: "1px solid #1f1f2e",
-  zIndex: 999
+  zIndex: 999,
+  paddingTop: "50px" // Extra space for close button
 };
 
 const mobileMenuOpen = {
