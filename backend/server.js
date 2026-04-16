@@ -92,12 +92,13 @@ app.use('*', (req, res) => {
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`\n
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`
   ===================================
   Nyx Digital API Server Running
   ===================================
   Port: ${PORT}
+  Host: 0.0.0.0
   Environment: ${process.env.NODE_ENV || 'development'}
   Time: ${new Date().toLocaleString()}
   ===================================
