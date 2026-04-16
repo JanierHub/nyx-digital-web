@@ -248,72 +248,43 @@ function Navbar() {
         <div style={hamburgerLine}></div>
       </button>
 
-      {/* Mobile Menu */}
-      <div style={{...mobileMenu, ...(isMenuOpen ? mobileMenuOpen : {})}} className="mobile-menu">
-        {/* Close Button */}
-        {/* Close Button */}
-        <button 
-          onClick={() => setIsMenuOpen(false)}
-          style={{
-            position: "absolute",
-            top: "15px",
-            right: "20px",
-            background: "rgba(100, 255, 218, 0.1)",
-            border: "1px solid #64FFDA",
-            color: "#64FFDA",
-            fontSize: "20px",
-            cursor: "pointer",
-            padding: "8px 12px",
-            borderRadius: "8px",
-            zIndex: 1001,
-            minWidth: "44px",
-            minHeight: "44px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-          aria-label="Cerrar menú"
-        >
-          ✕
-        </button>
-        <Link to="/" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/'); }}>Inicio</Link>
-        <Link to="/proyectos" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/proyectos'); }}>Proyectos</Link>
-        <Link to="/nosotros" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/nosotros'); }}>Quiénes somos</Link>
-        <Link to="/contacto" style={mobileLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/contacto'); }}>Contacto</Link>
-        
-        {isAuthenticated ? (
-          <>
-            <div style={{ padding: "10px", borderBottom: "1px solid #1f1f2e" }}>
-              <div style={{ color: "#CCD6F6", fontSize: "14px", fontWeight: "600" }}>
-                {user.name || user.email}
+      {/* Mobile Menu Dropdown */}
+      {isMenuOpen && (
+        <div style={mobileMenuDropdown} className="mobile-menu">
+          <Link to="/" style={mobileDropdownLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/'); }}>Inicio</Link>
+          <Link to="/proyectos" style={mobileDropdownLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/proyectos'); }}>Proyectos</Link>
+          <Link to="/nosotros" style={mobileDropdownLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/nosotros'); }}>Quiénes somos</Link>
+          <Link to="/contacto" style={mobileDropdownLink} onClick={(e) => { e.preventDefault(); setIsMenuOpen(false); handleNavigation('/contacto'); }}>Contacto</Link>
+          
+          {isAuthenticated ? (
+            <>
+              <div style={{ padding: "10px", borderBottom: "1px solid #1f1f2e", borderTop: "1px solid #1f1f2e", marginTop: "10px" }}>
+                <div style={{ color: "#CCD6F6", fontSize: "14px", fontWeight: "600" }}>
+                  {user.name || user.email}
+                </div>
+                <div style={{ color: "#8892B0", fontSize: "12px" }}>
+                  {isAdmin ? "Administrador" : "Usuario"}
+                </div>
               </div>
-              <div style={{ color: "#8892B0", fontSize: "12px" }}>
-                {isAdmin ? "Administrador" : "Usuario"}
-              </div>
-            </div>
-            <Link to="/profile" style={mobileLink} onClick={() => setIsMenuOpen(false)}>Mi Perfil</Link>
-            {isAdmin && (
-              <Link to="/admin" style={mobileLink} onClick={() => setIsMenuOpen(false)}>Panel Admin</Link>
-            )}
-            <button 
-              style={{...mobileLink, color: "#e74c3c", textAlign: "left"}} 
-              onClick={() => {
-                handleLogout();
-                setIsMenuOpen(false);
-              }}
-            >
-              Cerrar Sesión
-            </button>
-          </>
-        ) : (
-          <Link to="/login" style={mobileLink} onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
-        )}
-        
-        <button style={mobileCta} onClick={() => {
-          window.location.href = "/contacto";
-          setIsMenuOpen(false);
-        }}>Contáctanos</button>
-      </div>
+              <Link to="/profile" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Mi Perfil</Link>
+              {isAdmin && (
+                <Link to="/admin" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Panel Admin</Link>
+              )}
+              <button 
+                style={{...mobileDropdownLink, color: "#e74c3c", textAlign: "left", background: "transparent", border: "none", width: "100%"}} 
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+              >
+                Cerrar Sesión
+              </button>
+            </>
+          ) : (
+            <Link to="/login" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>Iniciar Sesión</Link>
+          )}
+        </div>
+      )}
 
       
     </nav>
@@ -369,34 +340,31 @@ const hamburgerLine = {
   transition: "all 0.3s ease"
 };
 
-const mobileMenu = {
-  position: "fixed",
-  top: "85px",
-  right: "-100%",
-  width: "80%",
-  maxWidth: "300px",
-  height: "calc(100vh - 85px)",
-  backgroundColor: "rgba(10,25,47,0.95)",
+const mobileMenuDropdown = {
+  position: "absolute",
+  top: "70px",
+  right: "10px",
+  width: "250px",
+  backgroundColor: "rgba(10,25,47,0.98)",
   backdropFilter: "blur(10px)",
-  flexDirection: "column",
-  padding: "30px",
-  gap: "20px",
-  transition: "right 0.3s ease",
-  borderLeft: "1px solid #1f1f2e",
+  border: "1px solid #1f1f2e",
+  borderRadius: "10px",
+  padding: "15px",
   zIndex: 999,
-  paddingTop: "50px"
+  display: "flex",
+  flexDirection: "column",
+  gap: "5px",
+  boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
 };
 
-const mobileMenuOpen = {
-  right: "0"
-};
-
-const mobileLink = {
+const mobileDropdownLink = {
   color: "#CCD6F6",
   textDecoration: "none",
   padding: "12px 16px",
   borderRadius: "8px",
   transition: "all 0.3s ease",
+  fontSize: "14px",
+  display: "block",
   fontSize: "16px",
   textAlign: "center"
 };
