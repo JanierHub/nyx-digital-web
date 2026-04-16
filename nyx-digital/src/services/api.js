@@ -1,5 +1,5 @@
 // API base configuration
-// Production backend URL (Render)
+// Production backend URL on Render - Updated for deployment
 const API_BASE_URL = 'https://nyx-digital-api.onrender.com/api';
 
 // Generic API request function
