@@ -7,6 +7,14 @@ function TrabajemosPage() {
     <div style={wrapper}>
       <div style={overlay}>
 
+        <div style={iconContainer}>
+          <span style={animatedIcon}>💻</span>
+          <span style={{...animatedIcon, animationDelay: '0.2s'}}>🎨</span>
+          <span style={{...animatedIcon, animationDelay: '0.4s'}}>🚀</span>
+          <span style={{...animatedIcon, animationDelay: '0.6s'}}>⚡</span>
+          <span style={{...animatedIcon, animationDelay: '0.8s'}}>🌟</span>
+        </div>
+
         <h1 style={title}>Construyamos tu proyecto digital 🚀</h1>
 
         <p style={subtitle}>
@@ -18,19 +26,25 @@ function TrabajemosPage() {
         <div style={steps}>
 
           <div style={card}>
-            <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d" style={img}/>
+            <div style={iconWrapper}>
+              <span style={stepIcon}>💡</span>
+            </div>
             <h3>1. Cuéntame tu idea</h3>
             <p>Analizamos tu negocio y objetivos.</p>
           </div>
 
           <div style={card}>
-            <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a" style={img}/>
+            <div style={iconWrapper}>
+              <span style={stepIcon}>🎨</span>
+            </div>
             <h3>2. Diseño personalizado</h3>
             <p>Adaptado completamente a tu marca.</p>
           </div>
 
           <div style={card}>
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71" style={img}/>
+            <div style={iconWrapper}>
+              <span style={stepIcon}>🚀</span>
+            </div>
             <h3>3. Lanzamiento</h3>
             <p>Tu web lista para crecer.</p>
           </div>
@@ -47,7 +61,7 @@ function TrabajemosPage() {
             }
           }}
         >
-          {open ? "Cerrar cotización" : "Cotizar proyecto"}
+          {open ? "✕ Cerrar cotización" : "💰 Cotizar proyecto"}
         </button>
 
       </div>
@@ -338,7 +352,48 @@ style.textContent = `
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+  }
 `;
 document.head.appendChild(style);
+
+const iconContainer = {
+  display: "flex",
+  justifyContent: "center",
+  gap: "20px",
+  marginBottom: "30px"
+};
+
+const animatedIcon = {
+  fontSize: "3rem",
+  animation: "bounce 2s ease-in-out infinite"
+};
+
+const iconWrapper = {
+  width: "80px",
+  height: "80px",
+  borderRadius: "50%",
+  background: "linear-gradient(135deg, #64FFDA, #00E5FF)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  margin: "0 auto 20px",
+  fontSize: "2.5rem",
+  animation: "float 3s ease-in-out infinite"
+};
+
+const stepIcon = {
+  fontSize: "2.5rem"
+};
 
 export default TrabajemosPage;

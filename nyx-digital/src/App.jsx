@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import AuditTracker from "./components/AuditTracker";
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
+import SecretAdminLogin from "./pages/SecretAdminLogin";
 import ProfilePage from "./pages/ProfilePage";
 import ServicesPage from "./pages/ServicesPage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -24,7 +25,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/admin-login" element={<LoginPage />} />
+          <Route path="/nyx-admin-portal-2024" element={<SecretAdminLogin />} />
           <Route path="/servicios" element={<ServicesPage />} />
           <Route path="/proyectos" element={<ProjectsPage />} />
           <Route path="/nosotros" element={<AboutPage />} />

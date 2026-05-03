@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import AuditLog from '../models/AuditLog.js';
+import { authMiddleware, adminMiddleware } from '../middleware/auth.js';
+
 const router = express.Router();
-const AuditLog = require('../models/AuditLog');
-const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 
 // Middleware para registrar visitas de páginas (público)
 router.post('/visit', async (req, res) => {
@@ -130,4 +131,4 @@ router.delete('/cleanup', authMiddleware, adminMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
