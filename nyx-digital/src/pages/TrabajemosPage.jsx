@@ -78,7 +78,6 @@ function TrabajemosPage() {
 function Cotizador({ onClose }) {
 
   const [plan, setPlan] = useState(null);
-  const [mantenimiento, setMantenimiento] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
 
   let precio = 0;
@@ -87,13 +86,13 @@ function Cotizador({ onClose }) {
   if (plan === "back") precio = 200000;
   if (plan === "full") precio = 300000;
 
-  // Mantenimiento (cada unidad = 2 meses)
-  precio += mantenimiento * 40000;
+  // Incluye 2 meses de mantenimiento por defecto
+  precio += 40000;
 
   const mensaje = `Hola, quiero cotizar un proyecto web:
 
 Plan: ${plan}
-Mantenimiento: ${mantenimiento > 0 ? `${mantenimiento * 2} meses` : "No incluido"}
+Mantenimiento: 2 meses incluidos
 
 Precio estimado: $${precio}`;
 
@@ -185,40 +184,6 @@ Precio estimado: $${precio}`;
         )}
       </div>
 
-
-      {/* 🔥 MANTENIMIENTO */}
-      <div style={box}>
-        <p>Mantenimiento (opcional):</p>
-
-        <div style={contadorBox}>
-
-          <button
-            style={planBtn}
-            onClick={() => setMantenimiento(Math.max(0, mantenimiento - 1))}
-          >
-            -
-          </button>
-
-          <span>
-            {mantenimiento} → {mantenimiento * 2} meses
-          </span>
-
-          <button
-            style={planBtn}
-            onClick={() => setMantenimiento(mantenimiento + 1)}
-          >
-            +
-          </button>
-
-        </div>
-
-        {mantenimiento > 0 && (
-          <p style={info}>
-            Incluye soporte y actualizaciones durante {mantenimiento * 2} meses.
-          </p>
-        )}
-      </div>
-
       {/* PRECIO */}
       <h3>Total estimado: ${precio}</h3>
 
@@ -243,9 +208,10 @@ Precio estimado: $${precio}`;
 
 const wrapper = {
   minHeight: "100vh",
-  background: "linear-gradient(135deg, #0A192F, #112240, #0A192F)",
-  backgroundSize: "400% 400%",
-  animation: "gradientLoop 15s ease infinite"
+  backgroundImage: "url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  backgroundAttachment: "fixed"
 };
 
 const overlay = {
