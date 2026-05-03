@@ -165,6 +165,24 @@ export const healthAPI = {
   check: () => api.get('/health'),
 };
 
+// Audit API
+export const auditAPI = {
+  logVisit: (page, details = {}) => {
+    return fetch(`${API_BASE_URL}/audit/visit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ page, details })
+    }).then(res => res.json()).catch(err => {
+      console.log('Audit log failed (non-critical):', err);
+    });
+  },
+  getLogs: (params = {}) => api.get('/audit/logs', params),
+  getStats: () => api.get('/audit/stats'),
+  cleanup: (days = 30) => api.delete('/audit/cleanup', { days })
+};
+
 // Error handling utilities
 export class APIError extends Error {
   constructor(message, status = null, data = null) {

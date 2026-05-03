@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import AuditTracker from "./components/AuditTracker";
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -19,10 +20,10 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <AuditTracker />
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/admin-login" element={<LoginPage />} />
           <Route path="/servicios" element={<ServicesPage />} />
           <Route path="/proyectos" element={<ProjectsPage />} />

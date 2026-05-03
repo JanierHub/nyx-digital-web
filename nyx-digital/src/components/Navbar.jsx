@@ -145,32 +145,7 @@ function Navbar() {
               </div>
             )}
           </div>
-        ) : (
-          <button
-            onClick={() => navigate("/login")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "8px 16px",
-              backgroundColor: "rgba(100, 255, 218, 0.1)",
-              border: "1px solid #64FFDA",
-              borderRadius: "20px",
-              color: "#64FFDA",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-              transition: "all 0.3s ease"
-            }}
-            onMouseOver={(e) => {
-              e.target.style.backgroundColor = "rgba(100, 255, 218, 0.2)";
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = "rgba(100, 255, 218, 0.1)";
-            }}
-          >
-            ⚙️ Admin
-          </button>
-        )}
+        ) : null}
       </div>
 
       {/* Mobile Menu Button */}
@@ -215,9 +190,7 @@ function Navbar() {
                 Cerrar Sesión
               </button>
             </>
-          ) : (
-            <Link to="/login" style={mobileDropdownLink} onClick={() => setIsMenuOpen(false)}>⚙️ Admin</Link>
-          )}
+          ) : null}
         </div>
       )}
 
