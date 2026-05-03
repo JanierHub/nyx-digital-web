@@ -13,6 +13,22 @@ const reviewSchema = new mongoose.Schema({
     trim: true,
     maxlength: [500, 'Review cannot be more than 500 characters']
   },
+  project: {
+    type: String,
+    trim: true,
+    maxlength: [100, 'Project name cannot be more than 100 characters'],
+    default: ''
+  },
+  rating: {
+    type: Number,
+    min: 1,
+    max: 5,
+    default: 5
+  },
+  photo: {
+    type: String,
+    default: null
+  },
   likes: {
     type: Number,
     default: 0

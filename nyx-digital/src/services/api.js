@@ -139,7 +139,22 @@ export const usersAPI = {
 // Reviews API
 export const reviewsAPI = {
   getAll: (admin = false) => api.get('/reviews', { admin: admin.toString() }),
-  create: (reviewData) => api.post('/reviews', reviewData),
+  create: (reviewData) => {
+    // If reviewData is FormData, don't set Content-Type header
+    if (reviewData instanceof FormData) {
+      const token = localStorage.getItem('authToken');
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+      return fetch(`${API_BASE_URL}/reviews`, {
+        method: 'POST',
+        headers: headers,
+        body: reviewData
+      }).then(res => res.json());
+    }
+    return api.post('/reviews', reviewData);
+  },
   like: (id) => api.post(`/reviews/${id}/like`),
   toggleHide: (id) => api.put(`/reviews/${id}/hide`),
   delete: (id) => api.delete(`/reviews/${id}`),

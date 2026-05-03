@@ -64,9 +64,8 @@ function TrabajemosPage() {
 function Cotizador({ onClose }) {
 
   const [plan, setPlan] = useState(null);
-  const [dominio, setDominio] = useState("gratis");
-  const [mantenimiento, setMantenimiento] = useState(0); // 🔥 nuevo
-  const [isClosing, setIsClosing] = useState(false); // para controlar el texto del botón
+  const [mantenimiento, setMantenimiento] = useState(0);
+  const [isClosing, setIsClosing] = useState(false);
 
   let precio = 0;
 
@@ -74,17 +73,12 @@ function Cotizador({ onClose }) {
   if (plan === "back") precio = 200000;
   if (plan === "full") precio = 300000;
 
-  if (plan === "full" && dominio === "pago") {
-    precio += 60000;
-  }
-
-  // 🔥 mantenimiento (cada unidad = 2 meses)
+  // Mantenimiento (cada unidad = 2 meses)
   precio += mantenimiento * 40000;
 
   const mensaje = `Hola, quiero cotizar un proyecto web:
 
 Plan: ${plan}
-Dominio: ${plan === "full" ? dominio : "No aplica"}
 Mantenimiento: ${mantenimiento > 0 ? `${mantenimiento * 2} meses` : "No incluido"}
 
 Precio estimado: $${precio}`;
@@ -177,42 +171,6 @@ Precio estimado: $${precio}`;
         )}
       </div>
 
-      {/* DOMINIO */}
-      {plan === "full" && (
-        <div style={box}>
-          <p>Tipo de dominio:</p>
-
-          <label>
-            <input
-              type="radio"
-              checked={dominio === "gratis"}
-              onChange={() => setDominio("gratis")}
-            />
-            Dominio gratis
-          </label>
-
-          <label>
-            <input
-              type="radio"
-              checked={dominio === "pago"}
-              onChange={() => setDominio("pago")}
-            />
-            Dominio personalizado
-          </label>
-
-          {dominio === "gratis" && (
-            <p style={info}>
-              Publicación sin costo con plataformas modernas.
-            </p>
-          )}
-
-          {dominio === "pago" && (
-            <p style={info}>
-              Dominio profesional con costo anual aproximado de $60.000.
-            </p>
-          )}
-        </div>
-      )}
 
       {/* 🔥 MANTENIMIENTO */}
       <div style={box}>
@@ -271,9 +229,9 @@ Precio estimado: $${precio}`;
 
 const wrapper = {
   minHeight: "100vh",
-  backgroundImage: "url('https://images.unsplash.com/photo-1518770660439-4636190af475')",
-  backgroundSize: "cover",
-  backgroundPosition: "center"
+  background: "linear-gradient(135deg, #0A192F, #112240, #0A192F)",
+  backgroundSize: "400% 400%",
+  animation: "gradientLoop 15s ease infinite"
 };
 
 const overlay = {
@@ -371,5 +329,16 @@ const contadorBox = {
   alignItems: "center",
   gap: "10px"
 };
+
+// Add animation keyframes
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes gradientLoop {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+`;
+document.head.appendChild(style);
 
 export default TrabajemosPage;

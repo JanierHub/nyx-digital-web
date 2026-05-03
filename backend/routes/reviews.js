@@ -1,7 +1,26 @@
 import express from 'express';
 import Review from '../models/Review.js';
+import multer from 'multer';
+import path from 'path';
 
 const router = express.Router();
+
+// Configure multer for photo upload
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (extname && mimetype) {
+      return cb(null, true);
+    }
+    cb(new Error('Solo se permiten imágenes (jpeg, jpg, png, gif, webp)'));
+  }
+});
 
 // @route   GET /api/reviews
 // @desc    Get all reviews (visible ones for users, all for admin)
@@ -33,11 +52,11 @@ router.get('/', async (req, res) => {
 });
 
 // @route   POST /api/reviews
-// @desc    Create a new review
+// @desc    Create a new review with optional photo
 // @access  Public
-router.post('/', async (req, res) => {
+router.post('/', upload.single('photo'), async (req, res) => {
   try {
-    const { name, text } = req.body;
+    const { name, text, project, rating } = req.body;
     
     if (!name || !text) {
       return res.status(400).json({
@@ -53,16 +72,27 @@ router.post('/', async (req, res) => {
     
     let filteredName = name;
     let filteredText = text;
+    let filteredProject = project || '';
     
     badWords.forEach(word => {
       const regex = new RegExp(word, 'gi');
       filteredName = filteredName.replace(regex, '***');
       filteredText = filteredText.replace(regex, '***');
+      filteredProject = filteredProject.replace(regex, '***');
     });
+    
+    // Convert photo to base64 if uploaded
+    let photoData = null;
+    if (req.file) {
+      photoData = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    }
     
     const review = await Review.create({
       name: filteredName,
-      text: filteredText
+      text: filteredText,
+      project: filteredProject,
+      rating: rating ? parseInt(rating) : 5,
+      photo: photoData
     });
     
     res.status(201).json({
@@ -75,7 +105,7 @@ router.post('/', async (req, res) => {
     console.error('Create review error:', error);
     res.status(500).json({
       status: 'error',
-      message: 'Failed to create review'
+      message: error.message || 'Failed to create review'
     });
   }
 });
